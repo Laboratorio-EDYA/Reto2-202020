@@ -23,6 +23,7 @@ import config
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
+from DISClib.DataStructures import listiterator as it
 assert config
 
 """
@@ -35,43 +36,25 @@ es decir contiene los modelos con los datos en memoria
 # API del TAD Catalogo de Libros
 # -----------------------------------------------------
 
-
-
-# Funciones para agregar informacion al catalogo
-
-
-
-# ==============================
-# Funciones de consulta
-# ==============================
-
-
-
-# ==============================
-# Funciones de Comparacion
-# ==============================
-
 def newCatalog(sizes):
-    """ Inicializa el catálogo de libros
-    Crea una lista vacia para guardar todos los libros
-    Se crean indices (Maps) por los siguientes criterios:
-    Autores
-    ID libros
-    Tags
-    Año de publicacion
-    Retorna el catalogo inicializado.
-    """
-    catalog = {'movies': None,
-               'moviesIds': None,
+    catalog = {'moviesDetails': None,
+                'moviesCasting': None,
+               'moviesIdsDetails': None,
+               'moviesIdsCasting'
                'directors': None,
                'votesAverage': None,
                'actors': None,
-               'productionCompany': None,
-               'genre': None,
-               'country': None}
+               'productionCompanies': None,
+               'genres': None,
+               'countries': None}
 
-    catalog['movies'] = lt.newList('SINGLE_LINKED', compareMoviesIds)
-    catalog['moviesIds'] = mp.newMap(lt.getElement(sizes,0)),
+    catalog['moviesDetails'] = lt.newList('SINGLE_LINKED', compareMoviesIds)
+    catalog['moviesCasting'] = lt.newList('SINGLE_LINKED', compareMoviesIds)
+    catalog['moviesIdsDetails'] = mp.newMap(lt.getElement(sizes,0)),
+                                   maptype='PROBING',
+                                   loadfactor=0.4,
+                                   comparefunction=compareMapMoviesIds)
+    catalog['moviesIdsCasting'] = mp.newMap(lt.getElement(sizes,0)),
                                    maptype='PROBING',
                                    loadfactor=0.4,
                                    comparefunction=compareMapMoviesIds)
@@ -87,7 +70,7 @@ def newCatalog(sizes):
                                   maptype='CHAINING',
                                   loadfactor=0.7,
                                   comparefunction=compareActorsByName)
-    catalog['productionCompany'] = mp.newMap(lt.getElement(sizes,4),
+    catalog['productionCompanies'] = mp.newMap(lt.getElement(sizes,4),
                                  maptype='CHAINING',
                                  loadfactor=0.7,
                                  comparefunction=compareProductionCompany)
@@ -95,7 +78,7 @@ def newCatalog(sizes):
                                  maptype='CHAINING',
                                  loadfactor=0.7,
                                  comparefunction=compareGenres)
-    catalog['country'] = mp.newMap(lt.getElement(sizes,6),
+    catalog['countries'] = mp.newMap(lt.getElement(sizes,6),
                                  maptype='CHAINING',
                                  loadfactor=0.7,
                                  comparefunction=compareCountry)
@@ -104,89 +87,103 @@ def newCatalog(sizes):
                                  loadfactor=0.7,
                                  comparefunction=compareCountry)
 
-def addMovie(catalog, movie):
-    lt.addLast(catalog['movies'], movie)
-    mp.put(catalog['moviesIds'], movie['id'], movie)
-    mp.put(catalog['directors'], movie['id'], movie)
-    mp.put(catalog['votesAverage'], movie['id'], movie)
-    mp.put(catalog['actors'], movie['id'], movie)
-    mp.put(catalog['productionCompany'], movie['id'], movie)
-    mp.put(catalog['genres'], movie['id'], movie)
-    mp.put(catalog['country'], movie['id'], movie)
-    mp.put(catalog['votesCount'], movie['id'], movie)
+# Funciones para agregar informacion al catalogo
 
-def moviesByDirector(directorName):
-    """
-    Crea una nueva estructura para modelar los libros de un autor
-    y su promedio de ratings
-    """
-    director = {'name': "", "movies": None,  "average_rating": 0}
-    director['name'] = directorName
-    director['movies'] = lt.newList('SINGLE_LINKED', compareDirectorsByName)
-    return director
+def addMovieDetails(catalog, movie):
+    lt.addLast(catalog['moviesDetails'], movie)
+    mp.put(catalog['moviesIdsDetails'], movie['id'], movie)
+    mp.put(catalog['votesAverage'], movie['vote_average'], movie)
+    mp.put(catalog['productionCompanies'], movie['production_companies'], movie)
+    mp.put(catalog['genres'], movie['genres'], movie)
+    mp.put(catalog['countries'], movie['production_countries'], movie)
+    mp.put(catalog['votesCount'], movie['vote_count'], movie)
+
+def addMovieCasting(catalog, movie):
+    lt.addLast(catalog['moviesCasting'], movie)
+    mp.put(catalog['moviesIdsCasting'], movie['id'], movie)
+    mp.put(catalog['directors'], movie['director'], movie)
+    mp.put(catalog['actors'], movie['actor1_name'], movie)
+    mp.put(catalog['actors'], movie['actor2_name'], movie)
+    mp.put(catalog['actors'], movie['actor3_name'], movie)
+    mp.put(catalog['actors'], movie['actor4_name'], movie)
+    mp.put(catalog['actors'], movie['actor5_name'], movie)
+
+# ==============================
+# Funciones de consulta
+# ==============================
 
 def getmoviesByDirector(catalog, directorname):
-    """
-    Retorna un autor con sus libros a partir del nombre del autor
-    """
     director = mp.get(catalog['directors'], directorname)
     if director:
         return me.getValue(director)
     return None
 
 def getmoviesByActor(catalog, actorname):
-    """
-    Retorna un autor con sus libros a partir del nombre del autor
-    """
-    actor = mp.get(catalog['actors'], authorname)
-    if author:
-        return me.getValue(author)
+    actor = mp.get(catalog['actors'], actorname)
+    if actor:
+        return me.getValue(actor)
     return None
 
+def getmoviesByProductionCompany(catalog, companyname):
+    company = mp.get(catalog['productionCompanies'], companyname)
+    if company:
+        return me.getValue(company)
+    return None
+
+def getmoviesByGenres(catalog, genrename):
+    genre = mp.get(catalog['genres'], genrename)
+    if genre:
+        return me.getValue(genre)
+    return None
+
+def getmoviesByCountry(catalog, directorname):
+    country = mp.get(catalog['countries'], directorname)
+    if country:
+        return me.getValue(country)
+    return None
+
+# ==============================
+# Funciones de Filtrado
+# ==============================
+
+def filtrado(lst, catalog, criterio):
+    
+def moviesByDirector(directorName):
+    director = {'name': "", "movies": None}
+    director['name'] = directorName
+    director['movies'] = lt.newList('SINGLE_LINKED', compareDirectorsByName)
+    return director
+
 def moviesByCountry(countryName):
-    """
-    Crea una nueva estructura para modelar los libros de un autor
-    y su promedio de ratings
-    """
     country = {'name': "", "movies": None}
     country['name'] = countryName
     country['movies'] = lt.newList('SINGLE_LINKED', compareCountry)
+
     return country
 
 def moviesByProductionCompany(companyName):
-    """
-    Crea una nueva estructura para modelar los libros de un autor
-    y su promedio de ratings
-    """
     company = {'name': "", "movies": None}
     company['name'] = companyName
     company['movies'] = lt.newList('SINGLE_LINKED', compareProductionCompany)
     return company
 
-def moviesByProductionAuthor(authorName):
-    """
-    Crea una nueva estructura para modelar los libros de un autor
-    y su promedio de ratings
-    """
-    author = {'name': "", "books": None,  "average_rating": 0}
-    author['name'] = authorName
-    author['books'] = lt.newList('SINGLE_LINKED', compareActorsByName)
-    return author
-
 def moviesByGenre(genreName):
-    """
-    Crea una nueva estructura para modelar los libros de un autor
-    y su promedio de ratings
-    """
     genre = {'name': "", "movies": None}
     genre['name'] = genreName
     genre['movies'] = lt.newList('SINGLE_LINKED', compareGenres)
     return genre
 
+def moviesByActor(actorName):
+    actor = {'name': "", "movies": None}
+    actor['name'] = actorName
+    actor['movies'] = lt.newList('SINGLE_LINKED', compareActorsByName)
+    return actor
+
+# ==============================
+# Funciones de Comparacion
+# ==============================
+
 def compareMoviesIds(id1, id2):
-    """
-    Compara dos ids de libros
-    """
     if (int(id1) == int(id2)):
         return 0
     elif int(id1) > int(id2):
@@ -195,9 +192,6 @@ def compareMoviesIds(id1, id2):
         return -1
 
 def compareVotesCount(vote1, vote2):
-    """
-    Compara dos vote count de libros
-    """
     if (int(vote1) == int(vote2)):
         return 0
     elif int(vote1) > int(vote2):
@@ -206,10 +200,6 @@ def compareVotesCount(vote1, vote2):
         return -1
 
 def compareMapMoviesIds(id, entry):
-    """
-    Compara dos ids de libros, id es un identificador
-    y entry una pareja llave-valor
-    """
     identry = me.getKey(entry)
     if (int(id) == int(identry)):
         return 0
@@ -218,15 +208,10 @@ def compareMapMoviesIds(id, entry):
     else:
         return -1
 
-def compareDirectorsByName(keyname, director):
-    """
-    Compara dos nombres de autor. El primero es una cadena
-    y el segundo un entry de un map
-    """
-    directentry = me.getKey(director)
-    if (keyname == directentry):
+def compareDirectorsByName(director1, director2):
+    if (director1 == director2):
         return 0
-    elif (keyname > directentry):
+    elif (director1 > director2):
         return 1
     else:
         return -1
@@ -272,3 +257,32 @@ def compareCountry(country1, country2):
     else:
         return 0 
     return catalog
+
+# ==============================
+# Funciones de Comparacion
+# ==============================
+
+def moviesSize(catalog):
+    return lt.size(catalog['movies'])
+
+def MoviesIdsSize(catalog):
+    return mp.size(catalog['moviesIds'])
+
+def actorsSize(catalog):
+    return mp.size(catalog['actors'])
+
+def genresSize(catalog):
+    return mp.size(catalog['genres'])
+
+def productionCompaniesSize(catalog):
+    return mp.size(catalog['productionCompanies'])
+
+def countriesSize(catalog):
+    return mp.size(catalog['countries'])
+
+def voteAverageSize(catalog):
+    return mp.size(catalog['voteAverage'])
+
+def voteCountSize(catalog):
+    return mp.size(catalog['voteCount'])
+    
