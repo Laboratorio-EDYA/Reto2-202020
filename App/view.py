@@ -71,6 +71,7 @@ def menuApp():
     print("8- Salir de la aplicación") 
 
 def main():
+    cont = None
     while True:
         menuApp()
         opcion = input('Selecciona una opción para continuar: ')
@@ -80,19 +81,21 @@ def main():
                 tamaño = int(input("Digita su selección para el tamaño de los archivos CSV: "))
                 t1_start = process_time() #tiempo inicial
                 if tamaño == 1:
-                    size = 2000
+                    size = 2001
+                    loadfactor = 0.5
                     print("Inicializando Catálogo ....")
                     # cont es el controlador que se usará de acá en adelante
-                    cont = ctrl.initCatalog(size)
+                    cont = ctrl.initCatalog(size,loadfactor)
                     print("Cargando información de los archivos .....")
-                    ctrl.loadData(cont,listCasting_s, listDetails_s,)
+                    ctrl.loadData(cont,listCasting_s, listDetails_s)
                     print('Películas (detalles) cargadas: ' + str(ctrl.moviesDetailsSize(cont)))
                     print('Películas (Casting) cargadas: ' + str(ctrl.moviesCastingSize(cont)))
                 elif tamaño == 2:
-                    size = 329046
+                    size = 329047
+                    loadfactor = 2
                     print("Inicializando Catálogo ....")
                     # cont es el controlador que se usará de acá en adelante
-                    cont = ctrl.initCatalog(size)
+                    cont = ctrl.initCatalog(size,loadfactor)
                     print("Cargando información de los archivos .....")
                     ctrl.loadData(cont,listCasting_l, listDetails_l)
                     print('Películas (detalles) cargadas: ' + str(ctrl.moviesDetailsSize(cont)))
@@ -103,7 +106,20 @@ def main():
                 print("Tiempo de ejecución ",t1_stop-t1_start," segundos ")
 
             elif int(opcion[0]) == 2:
-                print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
+                if cont == None:
+                    print('¡KELLY CARGUE EL ARCHIVO PRIMERO!')
+                else:
+                    name = input('Digite el nombre de la productura: ')
+                    print('CALMASIÓN, SI ES CON ARCHIVOS GRANDES SE ESTÁ DEMORANDO 87 SEG EN PROMEDIO :('))
+                    data = ctrl.descubrirProductorasDeCine(cont,name)
+                    if data == -1:
+                        print('¿¿KELLY PERO QUÉ MONDÁ DE COMPAÑÍA ES ESA??')
+                    else:
+                        print('Nombres de peliculas para la compañia ',name,':')
+                        for i in range(data[2]):
+                            print(i+1,'. ',lt.getElement(data[0],i)['original_title'])
+                        print('El promedio para las peliculas para la compañia ',name,' es de: ',round(data[1],2))
+                        print('Para un total de ',data[2],' peliculas')
 
             elif int(opcion[0]) == 3:
                 print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")

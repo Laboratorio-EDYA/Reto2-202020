@@ -36,8 +36,8 @@ recae sobre el controlador.
 # ___________________________________________________
 #  Inicializacion del catalogo
 # ___________________________________________________
-def initCatalog(size):
-    catalog=model.newCatalog(size)
+def initCatalog(size,loadfactor):
+    catalog=model.newCatalog(size,loadfactor)
     return catalog
 # ___________________________________________________
 #  Funciones para la carga de datos y almacenamiento
@@ -120,6 +120,9 @@ def getMoviesByCountry(catalog):
     return model.moviesByCountry(catalog)
 def getMoviesByGenre(catalog):
     return model.moviesByGenre(catalog)
+
+def descubrirProductorasDeCine(catalog, nameCompany):
+    return model.descubrirProductorasDeCine(catalog, nameCompany)
 
 
 

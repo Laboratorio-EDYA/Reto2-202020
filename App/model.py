@@ -36,13 +36,12 @@ es decir contiene los modelos con los datos en memoria
 # API del TAD Catalogo de Libros
 # -----------------------------------------------------
 
-def newCatalog(size):
+def newCatalog(size,loadfactor):
     catalog = {'moviesDetails': None,
                 'moviesCasting': None,
                 'moviesIdsDetails': None,
-                'moviesIdsCasting'
+                'moviesIdsCasting': None,
                 'directors': None,
-                'votesAverage': None,
                 'actors': None,
                 'productionCompanies': None,
                 'genres': None,
@@ -52,39 +51,31 @@ def newCatalog(size):
     catalog['moviesCasting'] = lt.newList('SINGLE_LINKED', compareMoviesIds)
     catalog['moviesIdsDetails'] = mp.newMap(size,
                                 maptype='CHAINING',
-                                loadfactor=2,
+                                loadfactor=loadfactor,
                                 comparefunction=compareMapMoviesIds)
     catalog['moviesIdsCasting'] = mp.newMap(size,
                                    maptype='CHAINING',
-                                   loadfactor=2,
+                                   loadfactor=loadfactor,
                                    comparefunction=compareMapMoviesIds)
     catalog['directors'] = mp.newMap(size,
                                    maptype='CHAINING',
-                                   loadfactor=2,
+                                   loadfactor=loadfactor,
                                    comparefunction=compareDirectorsByName)
-    catalog['votesAverage'] = mp.newMap(size,
-                                maptype='CHAINING',
-                                loadfactor=2,
-                                comparefunction=compareVotesAverage)
     catalog['actors'] = mp.newMap(size,
                                   maptype='CHAINING',
-                                  loadfactor=2,
+                                  loadfactor=loadfactor,
                                   comparefunction=compareActorsByName)
     catalog['productionCompanies'] = mp.newMap(size,
                                  maptype='CHAINING',
-                                 loadfactor=2,
+                                 loadfactor=loadfactor,
                                  comparefunction=compareProductionCompany)
     catalog['genres'] = mp.newMap(size,
                                  maptype='CHAINING',
-                                 loadfactor=2,
+                                 loadfactor=loadfactor,
                                  comparefunction=compareGenres)
     catalog['countries'] = mp.newMap(size,
                                  maptype='CHAINING',
-                                 loadfactor=2,
-                                 comparefunction=compareCountry)
-    catalog['votesCount'] = mp.newMap(size,
-                                 maptype='CHAINING',
-                                 loadfactor=2,
+                                 loadfactor=loadfactor,
                                  comparefunction=compareCountry)
     return catalog
 
@@ -172,7 +163,6 @@ def addMovieByProductionCompany(catalog,companyName,movie):
         company = NewProductionCompany(companyName)
         mp.put(companies, companyName, company)
     lt.addLast(company['movies'], movie)
-
     companyavg = company['vote_average']
     movieavg = movie['vote_average']
     companycount = company['vote_count']
@@ -298,32 +288,32 @@ def getmoviesByCountry(catalog, directorname):
 def NewDirector(directorName):
     director = {'name': "", "movies": None, 'vote_average': [0.0,0.0,0], 'vote_count': [0,0,0]}
     director['name'] = directorName
-    director['movies'] = lt.newList('SINGLE_LINKED', compareDirectorsByName)
+    director['movies'] = lt.newList('ARRAY_LIST', compareDirectorsByName)
     return director
 
 def NewCountry(countryName):
     country = {'name': "", "movies": None, 'vote_average': [0.0,0.0,0], 'vote_count': [0,0,0]}
     country['name'] = countryName
-    country['movies'] = lt.newList('SINGLE_LINKED', compareCountry)
+    country['movies'] = lt.newList('ARRAY_LIST', compareCountry)
 
     return country
 
 def NewProductionCompany(companyName):
     company = {'name': "", "movies": None, 'vote_average': [0.0,0.0,0], 'vote_count': [0,0,0]}
     company['name'] = companyName
-    company['movies'] = lt.newList('SINGLE_LINKED', compareProductionCompany)
+    company['movies'] = lt.newList('ARRAY_LIST', compareProductionCompany)
     return company
 
 def NewGenre(genreName):
     genre = {'name': "", "movies": None, 'vote_average': [0.0,0.0,0], 'vote_count': [0,0,0]}
     genre['name'] = genreName
-    genre['movies'] = lt.newList('SINGLE_LINKED', compareGenres)
+    genre['movies'] = lt.newList('ARRAY_LIST', compareGenres)
     return genre
 
 def NewActor(actorName):
     actor = {'name': "", "movies": None, 'vote_average': [0.0,0.0,0], 'vote_count': [0,0,0]}
     actor['name'] = actorName
-    actor['movies'] = lt.newList('SINGLE_LINKED', compareActorsByName)
+    actor['movies'] = lt.newList('ARRAY_LIST', compareActorsByName)
     return actor
 
 # ==============================
@@ -441,3 +431,15 @@ def voteAverageSize(catalog):
 def voteCountSize(catalog):
     return mp.size(catalog['voteCount'])
     
+# ==============================
+# Funciones de los Requerimientos
+# ==============================
+
+def descubrirProductorasDeCine(catalog, nameCompany):
+    try:
+        companies = getmoviesByProductionCompany(catalog, nameCompany)
+        movies_names = companies['movies']
+        movies_avr = companies['vote_average'][0]
+        return (movies_names,movies_avr,lt.size(movies_names))
+    except:
+        return -1
