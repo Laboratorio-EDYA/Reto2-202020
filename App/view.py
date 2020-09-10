@@ -26,7 +26,7 @@ from DISClib.ADT import list as lt
 from DISClib.DataStructures import listiterator as it
 from App import controller as ctrl
 assert config
-
+from time import process_time
 """
 La vista se encarga de la interacción con el usuario.
 Presenta el menu de opciones y por cada seleccion
@@ -38,10 +38,10 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
-listDetails_s = "Data/themoviesdb/SmallMoviesDetailsCleaned.csv"
-listDetails_l = "Data/themoviesdb/AllMoviesDetailsCleaned.csv"
-listCasting_s = "Data/themoviesdb/MoviesCastingRaw-small.csv"
-listCasting_l = "Data/themoviesdb/AllMoviesCastingRaw.csv"
+listDetails_s = "SmallMoviesDetailsCleaned.csv"
+listDetails_l = "AllMoviesDetailsCleaned.csv"
+listCasting_s = "MoviesCastingRaw-small.csv"
+listCasting_l = "AllMoviesCastingRaw.csv"
  
 # ___________________________________________________
 #  Funciones para imprimir la inforamación de
@@ -61,64 +61,66 @@ def menuData():
 
 def menuApp():
     print("\nBienvenido")
-    print("1- Inicializar catálogo")
-    print("2- Cargar información del catálogo")
-    print("3- Descubrir productoras de cine")
-    print("4- Conocer a un director")
-    print("5- Conocer a un actor")
-    print("6- Entender un género de cine")
-    print("7- Encontrar películas por país")
-    print("8- (Beta) Probar view.py")
-    print("0- Salir de la aplicación") 
+    print("1- Cargar información del catálogo")
+    print("2- Descubrir productoras de cine")
+    print("3- Conocer a un director")
+    print("4- Conocer a un actor")
+    print("5- Entender un género de cine")
+    print("6- Encontrar películas por país")
+    print("7- (Beta) Probar view.py")
+    print("8- Salir de la aplicación") 
 
 def main():
     while True:
-    printMenu()
-    inputs = int(input('Selecciona una opción para continuar'))
-    if len(inputs) > 0:
-        if inputs == 1:
-            continuar == True
-            while continuar == True:
-                menuApp()
-                opcion = int(input("Digita la opción que deseas ejecutar: "))
-                if opcion == 1:
+        menuApp()
+        opcion = input('Selecciona una opción para continuar: ')
+        if len(opcion[0]) > 0:
+            if int(opcion[0]) == 1:
+                menuData()
+                tamaño = int(input("Digita su selección para el tamaño de los archivos CSV: "))
+                t1_start = process_time() #tiempo inicial
+                if tamaño == 1:
+                    size = 2000
                     print("Inicializando Catálogo ....")
                     # cont es el controlador que se usará de acá en adelante
-                    cont = ctrl.initCatalog()
-
-                elif opcion == 2:
+                    cont = ctrl.initCatalog(size)
                     print("Cargando información de los archivos .....")
-                    menuApp()
-                    tamaño = int(input("Digita el tamaño de los archivos CSV: "))
-                    if tamaño == 1:
-                        ctrl.loadData(cont, listDetails_s,listCasting_s)
-                        print('Películas (detalles) cargadas: ' + str(ctrl.listDetails_s(cont)))
-                        print('Películas (Casting) cargadas: ' + str(ctrl.listCasting_s(cont)))
-                    elif tamaño == 2:
-                        ctrl.loadData(cont, listDetails_l,listCasting_l)
-                        print('Películas (detalles) cargadas: ' + str(ctrl.listDetails_l(cont)))
-                        print('Películas (Casting) cargadas: ' + str(ctrl.listCasting_l(cont)))
-                    else:
-                        print("Opción inválida.....")
-
-                elif opcion == 3:
-                    print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
-
-                elif opcion == 4:
-                    print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
-
-                elif opcion == 5:
-                    print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
-                
-                elif opcion == 6:
-                    print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
-            
-                elif opcion == 7:
-                    print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
-        
-                elif opcion == 8:
-                    print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
-                    
+                    ctrl.loadData(cont,listCasting_s, listDetails_s,)
+                    print('Películas (detalles) cargadas: ' + str(ctrl.moviesDetailsSize(cont)))
+                    print('Películas (Casting) cargadas: ' + str(ctrl.moviesCastingSize(cont)))
+                elif tamaño == 2:
+                    size = 329046
+                    print("Inicializando Catálogo ....")
+                    # cont es el controlador que se usará de acá en adelante
+                    cont = ctrl.initCatalog(size)
+                    print("Cargando información de los archivos .....")
+                    ctrl.loadData(cont,listCasting_l, listDetails_l)
+                    print('Películas (detalles) cargadas: ' + str(ctrl.moviesDetailsSize(cont)))
+                    print('Películas (Casting) cargadas: ' + str(ctrl.moviesCastingSize(cont)))
                 else:
-                    sys.exit(0)
-sys.exit(0)
+                    print("Opción inválida.....")
+                t1_stop = process_time() #tiempo final
+                print("Tiempo de ejecución ",t1_stop-t1_start," segundos ")
+
+            elif int(opcion[0]) == 2:
+                print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
+
+            elif int(opcion[0]) == 3:
+                print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
+
+            elif int(opcion[0]) == 4:
+                print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
+                    
+            elif int(opcion[0]) == 5:
+                print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
+                
+            elif int(opcion[0]) == 6:
+                print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
+            
+            elif int(opcion[0]) == 7:
+                print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
+                        
+            else:
+                sys.exit(0)
+
+main()
