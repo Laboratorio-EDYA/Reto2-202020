@@ -38,10 +38,10 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
-listDetails_s = "SmallMoviesDetailsCleaned.csv"
-listDetails_l = "AllMoviesDetailsCleaned.csv"
-listCasting_s = "MoviesCastingRaw-small.csv"
-listCasting_l = "AllMoviesCastingRaw.csv"
+listDetails_s = "themoviesdb/SmallMoviesDetailsCleaned.csv"
+listDetails_l = "themoviesdb/AllMoviesDetailsCleaned.csv"
+listCasting_s = "themoviesdb/MoviesCastingRaw-small.csv"
+listCasting_l = "themoviesdb/AllMoviesCastingRaw.csv"
  
 # ___________________________________________________
 #  Funciones para imprimir la inforamación de
