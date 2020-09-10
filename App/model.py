@@ -36,77 +36,226 @@ es decir contiene los modelos con los datos en memoria
 # API del TAD Catalogo de Libros
 # -----------------------------------------------------
 
-def newCatalog(sizes):
+def newCatalog(size):
     catalog = {'moviesDetails': None,
                 'moviesCasting': None,
-               'moviesIdsDetails': None,
-               'moviesIdsCasting'
-               'directors': None,
-               'votesAverage': None,
-               'actors': None,
-               'productionCompanies': None,
-               'genres': None,
-               'countries': None}
+                'moviesIdsDetails': None,
+                'moviesIdsCasting'
+                'directors': None,
+                'votesAverage': None,
+                'actors': None,
+                'productionCompanies': None,
+                'genres': None,
+                'countries': None}
 
     catalog['moviesDetails'] = lt.newList('SINGLE_LINKED', compareMoviesIds)
     catalog['moviesCasting'] = lt.newList('SINGLE_LINKED', compareMoviesIds)
-    catalog['moviesIdsDetails'] = mp.newMap(lt.getElement(sizes,0)),
-                                   maptype='PROBING',
-                                   loadfactor=0.4,
-                                   comparefunction=compareMapMoviesIds)
-    catalog['moviesIdsCasting'] = mp.newMap(lt.getElement(sizes,0)),
-                                   maptype='PROBING',
-                                   loadfactor=0.4,
-                                   comparefunction=compareMapMoviesIds)
-    catalog['directors'] = mp.newMap(lt.getElement(sizes,1),
-                                   maptype='PROBING',
-                                   loadfactor=0.4,
-                                   comparefunction=compareDirectorsByName)
-    catalog['votesAverage'] = mp.newMap(lt.getElement(sizes,2),
+    catalog['moviesIdsDetails'] = mp.newMap(size,
                                 maptype='CHAINING',
-                                loadfactor=0.7,
+                                loadfactor=2,
+                                comparefunction=compareMapMoviesIds)
+    catalog['moviesIdsCasting'] = mp.newMap(size,
+                                   maptype='CHAINING',
+                                   loadfactor=2,
+                                   comparefunction=compareMapMoviesIds)
+    catalog['directors'] = mp.newMap(size,
+                                   maptype='CHAINING',
+                                   loadfactor=2,
+                                   comparefunction=compareDirectorsByName)
+    catalog['votesAverage'] = mp.newMap(size,
+                                maptype='CHAINING',
+                                loadfactor=2,
                                 comparefunction=compareVotesAverage)
-    catalog['actors'] = mp.newMap(lt.getElement(sizes,3),
+    catalog['actors'] = mp.newMap(size,
                                   maptype='CHAINING',
-                                  loadfactor=0.7,
+                                  loadfactor=2,
                                   comparefunction=compareActorsByName)
-    catalog['productionCompanies'] = mp.newMap(lt.getElement(sizes,4),
+    catalog['productionCompanies'] = mp.newMap(size,
                                  maptype='CHAINING',
-                                 loadfactor=0.7,
+                                 loadfactor=2,
                                  comparefunction=compareProductionCompany)
-    catalog['genres'] = mp.newMap(lt.getElement(sizes,5),
+    catalog['genres'] = mp.newMap(size,
                                  maptype='CHAINING',
-                                 loadfactor=0.7,
+                                 loadfactor=2,
                                  comparefunction=compareGenres)
-    catalog['countries'] = mp.newMap(lt.getElement(sizes,6),
+    catalog['countries'] = mp.newMap(size,
                                  maptype='CHAINING',
-                                 loadfactor=0.7,
+                                 loadfactor=2,
                                  comparefunction=compareCountry)
-    atalog['votesCount'] = mp.newMap(lt.getElement(sizes,7),
+    catalog['votesCount'] = mp.newMap(size,
                                  maptype='CHAINING',
-                                 loadfactor=0.7,
+                                 loadfactor=2,
                                  comparefunction=compareCountry)
+    return catalog
 
 # Funciones para agregar informacion al catalogo
 
 def addMovieDetails(catalog, movie):
     lt.addLast(catalog['moviesDetails'], movie)
     mp.put(catalog['moviesIdsDetails'], movie['id'], movie)
-    mp.put(catalog['votesAverage'], movie['vote_average'], movie)
-    mp.put(catalog['productionCompanies'], movie['production_companies'], movie)
-    mp.put(catalog['genres'], movie['genres'], movie)
-    mp.put(catalog['countries'], movie['production_countries'], movie)
-    mp.put(catalog['votesCount'], movie['vote_count'], movie)
 
 def addMovieCasting(catalog, movie):
     lt.addLast(catalog['moviesCasting'], movie)
     mp.put(catalog['moviesIdsCasting'], movie['id'], movie)
-    mp.put(catalog['directors'], movie['director'], movie)
-    mp.put(catalog['actors'], movie['actor1_name'], movie)
-    mp.put(catalog['actors'], movie['actor2_name'], movie)
-    mp.put(catalog['actors'], movie['actor3_name'], movie)
-    mp.put(catalog['actors'], movie['actor4_name'], movie)
-    mp.put(catalog['actors'], movie['actor5_name'], movie)
+
+def addMovieByDirector(catalog,directorName,movie):
+    directors = catalog['directors']
+    existdirector = mp.contains(directors,directorName)
+    if existdirector:
+        entry = mp.get(directors, directorName)
+        director = me.getValue(entry)
+    else:
+        director = NewDirector(directorName)
+        mp.put(directors, directorName, director)
+    lt.addLast(director['movies'], movie)
+
+    direcavg = director['vote_average']
+    movieavg = me.getValue(mp.get(catalog['moviesIdsDetails'],movie['id']))['vote_average']
+    direcount = director['vote_count']
+    moviecount = me.getValue(mp.get(catalog['moviesIdsDetails'],movie['id']))['vote_count']
+    if (direcavg[0] == 0.0):
+        director['vote_average'][0] = float(movieavg)
+        director['vote_average'][1] = float(movieavg)
+        director['vote_average'][2] = 1
+    else:
+        director['vote_average'][1] = direcavg[1] + float(movieavg)
+        director['vote_average'][2] += 1
+        director['vote_average'][0] =  director['vote_average'][1]/ director['vote_average'][2]
+    if (direcount[0] == 0):
+        director['vote_count'][0] = int(moviecount)
+        director['vote_count'][1] = int(moviecount)
+        director['vote_count'][2] = 1
+    else:
+        director['vote_count'][1] = direcount[1] + int(moviecount)
+        director['vote_count'][2] += 1
+        director['vote_count'][0] =  director['vote_count'][1]/ director['vote_count'][2]
+    
+def addMovieByCountry(catalog,countryName,movie):
+    countries = catalog['countries']
+    existcountry = mp.contains(countries,countryName)
+    if existcountry:
+        entry = mp.get(countries, countryName)
+        country = me.getValue(entry)
+    else:
+        country = NewCountry(countryName)
+        mp.put(countries, countryName, country)
+    lt.addLast(country['movies'], movie)
+
+    countryavg = country['vote_average']
+    movieavg = movie['vote_average']
+    countrycount = country['vote_count']
+    moviecount = movie['vote_count']
+    if (countryavg[0] == 0.0):
+        country['vote_average'][0] = float(movieavg)
+        country['vote_average'][1] = float(movieavg)
+        country['vote_average'][2] = 1
+    else:
+        country['vote_average'][1] = countryavg[1] + float(movieavg)
+        country['vote_average'][2] += 1
+        country['vote_average'][0] =  country['vote_average'][1]/ country['vote_average'][2]
+    if (countrycount[0] == 0):
+        country['vote_count'][0] = int(moviecount)
+        country['vote_count'][1] = int(moviecount)
+        country['vote_count'][2] = 1
+    else:
+        country['vote_count'][1] = countrycount[1] + int(moviecount)
+        country['vote_count'][2] += 1
+        country['vote_count'][0] =  country['vote_count'][1]/ country['vote_count'][2]
+
+def addMovieByProductionCompany(catalog,companyName,movie):
+    companies = catalog['productionCompanies']
+    existcompany = mp.contains(companies,companyName)
+    if existcompany:
+        entry = mp.get(companies, companyName)
+        company = me.getValue(entry)
+    else:
+        company = NewProductionCompany(companyName)
+        mp.put(companies, companyName, company)
+    lt.addLast(company['movies'], movie)
+
+    companyavg = company['vote_average']
+    movieavg = movie['vote_average']
+    companycount = company['vote_count']
+    moviecount = movie['vote_count']
+    if (companyavg[0] == 0.0):
+        company['vote_average'][0] = float(movieavg)
+        company['vote_average'][1] = float(movieavg)
+        company['vote_average'][2] = 1
+    else:
+        company['vote_average'][1] = companyavg[1] + float(movieavg)
+        company['vote_average'][2] += 1
+        company['vote_average'][0] =  company['vote_average'][1]/ company['vote_average'][2]
+    if (companycount[0] == 0):
+        company['vote_count'][0] = int(moviecount)
+        company['vote_count'][1] = int(moviecount)
+        company['vote_count'][2] = 1
+    else:
+        company['vote_count'][1] = companycount[1] + int(moviecount)
+        company['vote_count'][2] += 1
+        company['vote_count'][0] =  company['vote_count'][1]/ company['vote_count'][2]
+
+def addMovieByGenre(catalog,genreName,movie):
+    genres = catalog['genres']
+    existgenre = mp.contains(genres,genreName)
+    if existgenre:
+        entry = mp.get(genres, genreName)
+        genre = me.getValue(entry)
+    else:
+        genre = NewGenre(genreName)
+        mp.put(genres, genreName, genre)
+    lt.addLast(genre['movies'], movie)
+
+    genreavg = genre['vote_average']
+    movieavg = movie['vote_average']
+    genrecount = genre['vote_count']
+    moviecount = movie['vote_count']
+    if (genreavg[0] == 0.0):
+        genre['vote_average'][0] = float(movieavg)
+        genre['vote_average'][1] = float(movieavg)
+        genre['vote_average'][2] = 1
+    else:
+        genre['vote_average'][1] = genreavg[1] + float(movieavg)
+        genre['vote_average'][2] += 1
+        genre['vote_average'][0] =  genre['vote_average'][1]/ genre['vote_average'][2]
+    if (genrecount[0] == 0):
+        genre['vote_count'][0] = int(moviecount)
+        genre['vote_count'][1] = int(moviecount)
+        genre['vote_count'][2] = 1
+    else:
+        genre['vote_count'][1] = genrecount[1] + int(moviecount)
+        genre['vote_count'][2] += 1
+        genre['vote_count'][0] =  genre['vote_count'][1]/ genre['vote_count'][2]
+
+def addMovieByActor(catalog,actorName,movie):
+    actors = catalog['actors']
+    existactor = mp.contains(actors,actorName)
+    if existactor:
+        entry = mp.get(actors, actorName)
+        actor = me.getValue(entry)
+    else:
+        actor = NewActor(actorName)
+        mp.put(actors, actorName, actor)
+    lt.addLast(actor['movies'], movie)
+    actoravg = actor['vote_average']
+    movieavg = me.getValue(mp.get(catalog['moviesIdsDetails'],movie['id']))['vote_average']
+    actorcount = actor['vote_count']
+    moviecount = me.getValue(mp.get(catalog['moviesIdsDetails'],movie['id']))['vote_count']
+    if (actoravg[0] == 0.0):
+        actor['vote_average'][0] = float(movieavg)
+        actor['vote_average'][1] = float(movieavg)
+        actor['vote_average'][2] = 1
+    else:
+        actor['vote_average'][1] = actoravg[1] + float(movieavg)
+        actor['vote_average'][2] += 1
+        actor['vote_average'][0] =  actor['vote_average'][1]/ actor['vote_average'][2]
+    if (actorcount[0] == 0):
+        actor['vote_count'][0] = int(moviecount)
+        actor['vote_count'][1] = int(moviecount)
+        actor['vote_count'][2] = 1
+    else:
+        actor['vote_count'][1] = actorcount[1] + int(moviecount)
+        actor['vote_count'][2] += 1
+        actor['vote_count'][0] =  actor['vote_count'][1]/ actor['vote_count'][2]
 
 # ==============================
 # Funciones de consulta
@@ -145,36 +294,34 @@ def getmoviesByCountry(catalog, directorname):
 # ==============================
 # Funciones de Filtrado
 # ==============================
-
-def filtrado(lst, catalog, criterio):
     
-def moviesByDirector(directorName):
-    director = {'name': "", "movies": None}
+def NewDirector(directorName):
+    director = {'name': "", "movies": None, 'vote_average': [0.0,0.0,0], 'vote_count': [0,0,0]}
     director['name'] = directorName
     director['movies'] = lt.newList('SINGLE_LINKED', compareDirectorsByName)
     return director
 
-def moviesByCountry(countryName):
-    country = {'name': "", "movies": None}
+def NewCountry(countryName):
+    country = {'name': "", "movies": None, 'vote_average': [0.0,0.0,0], 'vote_count': [0,0,0]}
     country['name'] = countryName
     country['movies'] = lt.newList('SINGLE_LINKED', compareCountry)
 
     return country
 
-def moviesByProductionCompany(companyName):
-    company = {'name': "", "movies": None}
+def NewProductionCompany(companyName):
+    company = {'name': "", "movies": None, 'vote_average': [0.0,0.0,0], 'vote_count': [0,0,0]}
     company['name'] = companyName
     company['movies'] = lt.newList('SINGLE_LINKED', compareProductionCompany)
     return company
 
-def moviesByGenre(genreName):
-    genre = {'name': "", "movies": None}
+def NewGenre(genreName):
+    genre = {'name': "", "movies": None, 'vote_average': [0.0,0.0,0], 'vote_count': [0,0,0]}
     genre['name'] = genreName
     genre['movies'] = lt.newList('SINGLE_LINKED', compareGenres)
     return genre
 
-def moviesByActor(actorName):
-    actor = {'name': "", "movies": None}
+def NewActor(actorName):
+    actor = {'name': "", "movies": None, 'vote_average': [0.0,0.0,0], 'vote_count': [0,0,0]}
     actor['name'] = actorName
     actor['movies'] = lt.newList('SINGLE_LINKED', compareActorsByName)
     return actor
@@ -191,10 +338,11 @@ def compareMoviesIds(id1, id2):
     else:
         return -1
 
-def compareVotesCount(vote1, vote2):
-    if (int(vote1) == int(vote2)):
+def compareVotesCount(vote, entry):
+    voteEntry = me.getKey(entry)
+    if (int(vote) == int(voteEntry)):
         return 0
-    elif int(vote1) > int(vote2):
+    elif int(vote) > int(voteEntry):
         return 1
     else:
         return -1
@@ -208,62 +356,69 @@ def compareMapMoviesIds(id, entry):
     else:
         return -1
 
-def compareDirectorsByName(director1, director2):
-    if (director1 == director2):
+def compareDirectorsByName(director, entry):
+    directorentry = me.getKey(entry)
+    if (director == directorentry):
         return 0
-    elif (director1 > director2):
+    elif (director > directorentry):
         return 1
     else:
         return -1
 
-def compareVotesAverage(Avr1,Avr2):
-    if (int(Avr1) == int(Avr2)):
+def compareVotesAverage(avr,entry):
+    avrentry = me.getKey(entry)
+    if (int(avr) == int(avrentry)):
         return 0
-    elif (int(Avr1) > int(Avr2)):
+    elif (int(avr) > int(avrentry)):
         return 1
     else:
         return -1
 
-def compareActorsByName(name1, name2):
-    if (name1 == name2):
+def compareActorsByName(name, entry):
+    nameentry = me.getKey(entry)
+    if (name == nameentry):
         return 0
-    elif (name1 > name2):
+    elif (name > nameentry):
         return 1
     else:
         return -1
 
-def compareProductionCompany(company1, company2):
-    if (company1 == company2):
+def compareProductionCompany(company, entry):
+    companyentry = me.getKey(entry)
+    if (company == companyentry):
         return 0
-    elif (company1 > company2):
+    elif (company > companyentry):
         return 1
     else:
         return 0
 
-def compareGenres(genre1, genre2):
-    if (genre1 == genre2):
+def compareGenres(genre, entry):
+    genreentry = me.getKey(entry)
+    if (genre == genreentry):
         return 0
-    elif (genre1 > genre2):
+    elif (genre > genreentry):
         return 1
     else:
         return 0 
-    return catalog
 
-def compareCountry(country1, country2):
-    if (country1 == country2):
+def compareCountry(country, entry):
+    countryentry = me.getKey(entry)
+    if (country == countryentry):
         return 0
-    elif (country1 > country2):
+    elif (country > countryentry):
         return 1
     else:
         return 0 
-    return catalog
 
 # ==============================
 # Funciones de Comparacion
 # ==============================
 
-def moviesSize(catalog):
-    return lt.size(catalog['movies'])
+def moviesDetailsSize(catalog):
+    return lt.size(catalog['moviesDetails'])
+
+def moviesCastingSize(catalog):
+    return lt.size(catalog['moviesCasting'])
 
 def MoviesIdsSize(catalog):
     return mp.size(catalog['moviesIds'])

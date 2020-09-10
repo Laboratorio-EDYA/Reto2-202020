@@ -36,31 +36,66 @@ recae sobre el controlador.
 # ___________________________________________________
 #  Inicializacion del catalogo
 # ___________________________________________________
-def initcatalog():
-    catalog=model.newCatalog()
+def initCatalog(size):
+    catalog=model.newCatalog(size)
     return catalog
 # ___________________________________________________
 #  Funciones para la carga de datos y almacenamiento
 #  de datos en los modelos
 # ___________________________________________________
 def loadData(catalog,moviesCastingFile,moviesDetailsFile):
-    loadmoviesCastingRaw(catalog,moviesCastingFile)
     loadmoviesDetailsCleaned(catalog,moviesDetailsFile)
+    loadmoviesCastingRaw(catalog,moviesCastingFile)
+
 def loadmoviesCastingRaw(catalog,moviesfile):
-    movies= cf.data_dir + moviesfile
-    input_file= csv.DictReader(open(moviesfile, encoding='utf-8-sig'))
+    moviesfile = cf.data_dir + moviesfile
+    dialect = csv.excel()
+    dialect.delimiter=";"
+    input_file= csv.DictReader(open(moviesfile, encoding='utf-8-sig'),dialect=dialect)
     for movie in input_file:
         model.addMovieCasting(catalog,movie)
+        actors1 = movie['actor1_name'].split(",")
+        actors2 = movie['actor2_name'].split(",")
+        actors3 = movie['actor3_name'].split(",")
+        actors4 = movie['actor4_name'].split(",")
+        actors5 = movie['actor5_name'].split(",")
+        directors = movie['director_name'].split(",")
+        for autor in actors1:
+            model.addMovieByActor(catalog, autor.strip(), movie)
+        for autor in actors2:
+            model.addMovieByActor(catalog, autor.strip(), movie)
+        for autor in actors3:
+            model.addMovieByActor(catalog, autor.strip(), movie)
+        for autor in actors4:
+            model.addMovieByActor(catalog, autor.strip(), movie)
+        for autor in actors5:
+            model.addMovieByActor(catalog, autor.strip(), movie)
+        for director in directors:
+            model.addMovieByDirector(catalog, director.strip(), movie)
+        
 def loadmoviesDetailsCleaned(catalog,moviesfile):
-    movies=cf.data_dir+moviesfile
-    input_file=csv.DictReader(open(moviesfile,encoding='utf-8-sig'))
+    moviesfile = cf.data_dir + moviesfile
+    dialect = csv.excel()
+    dialect.delimiter=";"
+    input_file = csv.DictReader(open(moviesfile,encoding='utf-8-sig'),dialect=dialect)
     for movie in input_file:
         model.addMovieDetails(catalog,movie)
+        companies = movie['production_companies'].split(",")
+        genres = movie['genres'].split(",")
+        countries = movie['production_countries'].split(",")
+        for company in companies:
+            model.addMovieByProductionCompany(catalog, company.strip(), movie)
+        for genre in genres:
+            model.addMovieByGenre(catalog, genre.strip(), movie)
+        for country in countries:
+            model.addMovieByCountry(catalog, country.strip(), movie)
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
-def moviesSize(catalog):
-    return model.moviesSize(catalog)
+def moviesDetailsSize(catalog):
+    return model.moviesDetailsSize(catalog)
+def moviesCastingSize(catalog):
+    return model.moviesCastingSize(catalog)
 def moviesIdsSize(catalog):
     return model.MoviesIdsSize(catalog)
 def actorsSize(catalog):
