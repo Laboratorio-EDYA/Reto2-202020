@@ -92,8 +92,9 @@ def main():
                     print('Películas (Casting) cargadas: ' + str(ctrl.moviesCastingSize(cont)))
                 elif tamaño == 2:
                     size = 329047
-                    loadfactor = 0.5
+                    loadfactor = 3
                     print("Inicializando Catálogo ....")
+                    print('CALMASIÓN, SI ES CON ARCHIVOS GRANDES SE ESTÁ DEMORANDO 87 SEG EN PROMEDIO :(')
                     # cont es el controlador que se usará de acá en adelante
                     cont = ctrl.initCatalog(size,loadfactor)
                     print("Cargando información de los archivos .....")
@@ -110,7 +111,6 @@ def main():
                     print('¡KELLY CARGUE EL ARCHIVO PRIMERO!')
                 else:
                     name = input('Digite el nombre de la productura: ')
-                    print('CALMASIÓN, SI ES CON ARCHIVOS GRANDES SE ESTÁ DEMORANDO 87 SEG EN PROMEDIO :(')
                     data = ctrl.descubrirProductorasDeCine(cont,name)
                     if data == -1:
                         print('¿¿KELLY PERO QUÉ MONDÁ DE COMPAÑÍA ES ESA??')
