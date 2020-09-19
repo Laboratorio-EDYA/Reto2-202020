@@ -132,27 +132,6 @@ def addMovieByCountry(catalog,countryName,movie):
         mp.put(countries, countryName, country)
     lt.addLast(country['movies'], movie)
 
-    countryavg = country['vote_average']
-    movieavg = movie['vote_average']
-    countrycount = country['vote_count']
-    moviecount = movie['vote_count']
-    if (countryavg[0] == 0.0):
-        country['vote_average'][0] = float(movieavg)
-        country['vote_average'][1] = float(movieavg)
-        country['vote_average'][2] = 1
-    else:
-        country['vote_average'][1] = countryavg[1] + float(movieavg)
-        country['vote_average'][2] += 1
-        country['vote_average'][0] =  country['vote_average'][1]/ country['vote_average'][2]
-    if (countrycount[0] == 0):
-        country['vote_count'][0] = int(moviecount)
-        country['vote_count'][1] = int(moviecount)
-        country['vote_count'][2] = 1
-    else:
-        country['vote_count'][1] = countrycount[1] + int(moviecount)
-        country['vote_count'][2] += 1
-        country['vote_count'][0] =  country['vote_count'][1]/ country['vote_count'][2]
-
 def addMovieByProductionCompany(catalog,companyName,movie):
     companies = catalog['productionCompanies']
     existcompany = mp.contains(companies,companyName)
@@ -165,8 +144,6 @@ def addMovieByProductionCompany(catalog,companyName,movie):
     lt.addLast(company['movies'], movie)
     companyavg = company['vote_average']
     movieavg = movie['vote_average']
-    companycount = company['vote_count']
-    moviecount = movie['vote_count']
     if (companyavg[0] == 0.0):
         company['vote_average'][0] = float(movieavg)
         company['vote_average'][1] = float(movieavg)
@@ -175,14 +152,6 @@ def addMovieByProductionCompany(catalog,companyName,movie):
         company['vote_average'][1] = companyavg[1] + float(movieavg)
         company['vote_average'][2] += 1
         company['vote_average'][0] =  company['vote_average'][1]/ company['vote_average'][2]
-    if (companycount[0] == 0):
-        company['vote_count'][0] = int(moviecount)
-        company['vote_count'][1] = int(moviecount)
-        company['vote_count'][2] = 1
-    else:
-        company['vote_count'][1] = companycount[1] + int(moviecount)
-        company['vote_count'][2] += 1
-        company['vote_count'][0] =  company['vote_count'][1]/ company['vote_count'][2]
 
 def addMovieByGenre(catalog,genreName,movie):
     genres = catalog['genres']
@@ -195,18 +164,8 @@ def addMovieByGenre(catalog,genreName,movie):
         mp.put(genres, genreName, genre)
     lt.addLast(genre['movies'], movie)
 
-    genreavg = genre['vote_average']
-    movieavg = movie['vote_average']
     genrecount = genre['vote_count']
     moviecount = movie['vote_count']
-    if (genreavg[0] == 0.0):
-        genre['vote_average'][0] = float(movieavg)
-        genre['vote_average'][1] = float(movieavg)
-        genre['vote_average'][2] = 1
-    else:
-        genre['vote_average'][1] = genreavg[1] + float(movieavg)
-        genre['vote_average'][2] += 1
-        genre['vote_average'][0] =  genre['vote_average'][1]/ genre['vote_average'][2]
     if (genrecount[0] == 0):
         genre['vote_count'][0] = int(moviecount)
         genre['vote_count'][1] = int(moviecount)
@@ -228,8 +187,6 @@ def addMovieByActor(catalog,actorName,movie):
     lt.addLast(actor['movies'], movie)
     actoravg = actor['vote_average']
     movieavg = me.getValue(mp.get(catalog['moviesIdsDetails'],movie['id']))['vote_average']
-    actorcount = actor['vote_count']
-    moviecount = me.getValue(mp.get(catalog['moviesIdsDetails'],movie['id']))['vote_count']
     if (actoravg[0] == 0.0):
         actor['vote_average'][0] = float(movieavg)
         actor['vote_average'][1] = float(movieavg)
@@ -238,45 +195,37 @@ def addMovieByActor(catalog,actorName,movie):
         actor['vote_average'][1] = actoravg[1] + float(movieavg)
         actor['vote_average'][2] += 1
         actor['vote_average'][0] =  actor['vote_average'][1]/ actor['vote_average'][2]
-    if (actorcount[0] == 0):
-        actor['vote_count'][0] = int(moviecount)
-        actor['vote_count'][1] = int(moviecount)
-        actor['vote_count'][2] = 1
-    else:
-        actor['vote_count'][1] = actorcount[1] + int(moviecount)
-        actor['vote_count'][2] += 1
-        actor['vote_count'][0] =  actor['vote_count'][1]/ actor['vote_count'][2]
 
 # ==============================
 # Funciones de consulta
 # ==============================
 
 def getmoviesByDirector(catalog, directorname):
-    director = mp.get(catalog['directors'], directorname)
+    director = mp.get(catalog['directors'], directorname.lower())
     if director:
         return me.getValue(director)
     return None
 
 def getmoviesByActor(catalog, actorname):
-    actor = mp.get(catalog['actors'], actorname)
+    actor = mp.get(catalog['actors'], actorname.lower())
     if actor:
         return me.getValue(actor)
     return None
 
 def getmoviesByProductionCompany(catalog, companyname):
-    company = mp.get(catalog['productionCompanies'], companyname)
+    company = mp.get(catalog['productionCompanies'], companyname.lower())
     if company:
         return me.getValue(company)
     return None
 
 def getmoviesByGenres(catalog, genrename):
-    genre = mp.get(catalog['genres'], genrename)
+    genre = mp.get(catalog['genres'], genrename.lower())
     if genre:
         return me.getValue(genre)
     return None
 
 def getmoviesByCountry(catalog, directorname):
-    country = mp.get(catalog['countries'], directorname)
+    country = mp.get(catalog['countries'], directorname.lower())
     if country:
         return me.getValue(country)
     return None
@@ -287,32 +236,32 @@ def getmoviesByCountry(catalog, directorname):
     
 def NewDirector(directorName):
     director = {'name': "", "movies": None, 'vote_average': [0.0,0.0,0], 'vote_count': [0,0,0]}
-    director['name'] = directorName
+    director['name'] = directorName.lower()
     director['movies'] = lt.newList('ARRAY_LIST', compareDirectorsByName)
     return director
 
 def NewCountry(countryName):
-    country = {'name': "", "movies": None, 'vote_average': [0.0,0.0,0], 'vote_count': [0,0,0]}
-    country['name'] = countryName
+    country = {'name': "", "movies": None}
+    country['name'] = countryName.lower()
     country['movies'] = lt.newList('ARRAY_LIST', compareCountry)
 
     return country
 
 def NewProductionCompany(companyName):
-    company = {'name': "", "movies": None, 'vote_average': [0.0,0.0,0], 'vote_count': [0,0,0]}
-    company['name'] = companyName
+    company = {'name': "", "movies": None, 'vote_average': [0.0,0.0,0]}
+    company['name'] = companyName.lower()
     company['movies'] = lt.newList('ARRAY_LIST', compareProductionCompany)
     return company
 
 def NewGenre(genreName):
-    genre = {'name': "", "movies": None, 'vote_average': [0.0,0.0,0], 'vote_count': [0,0,0]}
-    genre['name'] = genreName
+    genre = {'name': "", "movies": None, 'vote_count': [0,0,0]}
+    genre['name'] = genreName.lower()
     genre['movies'] = lt.newList('ARRAY_LIST', compareGenres)
     return genre
 
 def NewActor(actorName):
-    actor = {'name': "", "movies": None, 'vote_average': [0.0,0.0,0], 'vote_count': [0,0,0]}
-    actor['name'] = actorName
+    actor = {'name': "", "movies": None, 'vote_average': [0.0,0.0,0]}
+    actor['name'] = actorName.lower()
     actor['movies'] = lt.newList('ARRAY_LIST', compareActorsByName)
     return actor
 
@@ -437,9 +386,40 @@ def voteCountSize(catalog):
 
 def descubrirProductorasDeCine(catalog, nameCompany):
     try:
-        companies = getmoviesByProductionCompany(catalog, nameCompany)
-        movies_names = companies['movies']
-        movies_avr = companies['vote_average'][0]
-        return (movies_names,movies_avr,lt.size(movies_names))
+        company = getmoviesByProductionCompany(catalog, nameCompany)
+        movies = company['movies']
+        movies_avr = company['vote_average'][0]
+        return (movies,movies_avr,lt.size(movies))
+    except:
+        return -1
+
+def conocerUnActor(catalog, nameActor):
+    try:
+        actor = getmoviesByActor(catalog, nameActor)
+        movies = actor['movies']
+        movies_avr = actor['vote_average'][0]
+        directors = {}
+        movies_names = lt.newList('ARRAY_LIST')
+        # SE HALLAN LOS NOMBRES DE LAS PELICULAS EN LA LISTA DETAILS
+        movie = it.newIterator(movies)
+        while it.hasNext(movie):
+            current = it.next(movie)
+            name = me.getValue(mp.get(catalog['moviesIdsDetails'],current['id']))['original_title']
+            lt.addLast(movies_names,name)
+        # SE ASIGNA EL NUMERO DE COLABORACIONES POR DIRECTOR CON EL ACTOR
+        movie = it.newIterator(movies)
+        while it.hasNext(movie):
+            current = it.next(movie)
+            if current['director_name'] not in directors:
+                directors[current['director_name']] = 1
+            else:
+                directors[current['director_name']] += 1
+        director = ['',0]
+            # SE HALLA EL DIRECTOR CON MÁS COLABORACIONES CON EL ACTOR
+        for i in directors:
+            if directors[i] >= director[1]:
+                director[0] = i
+                director[1] = directors[i]
+        return (movies_names,movies_avr,lt.size(movies),director[0])
     except:
         return -1

@@ -106,11 +106,12 @@ def main():
                 t1_stop = process_time() #tiempo final
                 print("Tiempo de ejecución ",t1_stop-t1_start," segundos ")
 
-            elif int(opcion[0]) == 2:
+            elif int(opcion[0]) == 2: #REQUERIMIENTO 1
                 if cont == None:
                     print('¡KELLY CARGUE EL ARCHIVO PRIMERO!')
                 else:
-                    name = input('Digite el nombre de la productura: ')
+                    t1_start = process_time() #tiempo inicial
+                    name = input('Digite el nombre de la productura: ').lower().strip()
                     data = ctrl.descubrirProductorasDeCine(cont,name)
                     if data == -1:
                         print('¿¿KELLY PERO QUÉ MONDÁ DE COMPAÑÍA ES ESA??')
@@ -120,20 +121,38 @@ def main():
                             print(i+1,'. ',lt.getElement(data[0],i)['original_title'])
                         print('El promedio para las peliculas para la compañia ',name,' es de: ',round(data[1],2))
                         print('Para un total de ',data[2],' peliculas')
+                    t1_stop = process_time() #tiempo final
+                    print("Tiempo de ejecución ",t1_stop-t1_start," segundos ")
 
-            elif int(opcion[0]) == 3:
+            elif int(opcion[0]) == 3: #REQUERIMIENTO 2
                 print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
 
-            elif int(opcion[0]) == 4:
-                print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
+            elif int(opcion[0]) == 4: #REQUERIMIENTO 3
+                if cont == None:
+                    print('¡KELLY CARGUE EL ARCHIVO PRIMERO!')
+                else:
+                    t1_start = process_time() #tiempo inicial
+                    name = input('Digite el nombre del actor: ').lower().strip()
+                    data = ctrl.conocerUnActor(cont,name)
+                    if data == -1:
+                        print('¿¿KELLY PERO QUÉ MONDÁ DE ACTOR ES ESE??')
+                    else:
+                        print('Nombres de peliculas para el actor ',name,':')
+                        for i in range(data[2]):
+                            print(i+1,'. ',lt.getElement(data[0],i))
+                        print('El promedio para las peliculas para el actor ',name,' es de: ',round(data[1],2))
+                        print('Para un total de ',data[2],' peliculas')
+                        print('Este actor tuvo más colaboraciones con el director: ',data[3])
+                    t1_stop = process_time() #tiempo final
+                    print("Tiempo de ejecución ",t1_stop-t1_start," segundos ")
                     
-            elif int(opcion[0]) == 5:
+            elif int(opcion[0]) == 5: #REQUERIMIENTO 4
                 print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
                 
-            elif int(opcion[0]) == 6:
+            elif int(opcion[0]) == 6: #REQUERIMIENTO 5
                 print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
             
-            elif int(opcion[0]) == 7:
+            elif int(opcion[0]) == 7: #REQUERIMIENTO 6
                 print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
                         
             else:
