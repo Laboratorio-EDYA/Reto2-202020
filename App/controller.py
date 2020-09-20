@@ -119,8 +119,8 @@ def voteAverageSize(catalog):
 def voteCountSize(catalog):
     return model.voteCountSize(catalog)
 
-def getMoviesByDirector(catalog):
-    return model.moviesByDirector(catalog)
+def getMoviesByDirector(catalog,directorName):
+    return model.moviesByDirector(catalog,directorName)
 
 def getMoviesByActor(catalog):
     return model.moviesByActor(catalog)
