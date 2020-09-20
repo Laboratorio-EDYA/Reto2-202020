@@ -44,9 +44,8 @@ listCasting_s = "themoviesdb/MoviesCastingRaw-small.csv"
 listCasting_l = "themoviesdb/AllMoviesCastingRaw.csv"
  
 # ___________________________________________________
-#  Funciones para imprimir la inforamación de
-#  respuesta.  La vista solo interactua con
-#  el controlador.
+#  Funciones para imprimir la inforamación de respuesta.  
+#  La vista solo interactua con el controlador.
 # ___________________________________________________
 
 
@@ -77,7 +76,7 @@ def main():
         if len(opcion[0]) > 0:
             if int(opcion[0]) == 1:
                 menuData()
-                tamaño = int(input("Digita su selección para el tamaño de los archivos CSV: "))
+                tamaño = int(input("Digite su selección para el tamaño de los archivos CSV: "))
                 t1_start = process_time() #tiempo inicial
                 if tamaño == 1:
                     size = 2001
@@ -87,7 +86,7 @@ def main():
                     cont = ctrl.initCatalog(size,loadfactor)
                     print("Cargando información de los archivos .....")
                     ctrl.loadData(cont,listCasting_s, listDetails_s)
-                    print('Películas (detalles) cargadas: ' + str(ctrl.moviesDetailsSize(cont)))
+                    print('Películas (Detalles) cargadas: ' + str(ctrl.moviesDetailsSize(cont)))
                     print('Películas (Casting) cargadas: ' + str(ctrl.moviesCastingSize(cont)))
                 elif tamaño == 2:
                     size = 329047
@@ -165,10 +164,11 @@ def main():
                 
             elif int(opcion[0]) == 6: #REQUERIMIENTO 5
                 print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")         
+            
             elif int(opcion[0]) == 7: #SALIR
                 sys.exit(0)
+            
             else:
-                print('Elija una opción valida...')
+                print('Elije una opción valida.....')
 
 main()
-# 
