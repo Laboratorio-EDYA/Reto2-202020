@@ -140,6 +140,5 @@ def descubrirProductorasDeCine(catalog, nameCompany):
 def conocerUnActor(catalog, nameActor):
     return model.conocerUnActor(catalog,nameActor)
 
-
-
-    
+def entenderUnGenero(catalog, genre):
+    return model.entenderUnGenero(catalog,genre)    

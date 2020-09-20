@@ -423,3 +423,12 @@ def conocerUnActor(catalog, nameActor):
         return (movies_names,movies_avr,lt.size(movies),director[0])
     except:
         return -1
+
+def entenderUnGenero(catalog,genre):
+    try:
+        genero = getmoviesByGenres(catalog,genre)
+        peliculas = genero["movies"]
+        votos = genero["vote_count"][0]
+        return (peliculas,votos,lt.size(peliculas))
+    except:
+        return -1

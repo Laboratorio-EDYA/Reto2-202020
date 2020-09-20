@@ -67,8 +67,7 @@ def menuApp():
     print("4- Conocer a un actor")
     print("5- Entender un género de cine")
     print("6- Encontrar películas por país")
-    print("7- (Beta) Probar view.py")
-    print("8- Salir de la aplicación") 
+    print("7- Salir de la aplicación") 
 
 def main():
     cont = None
@@ -147,15 +146,28 @@ def main():
                     print("Tiempo de ejecución ",t1_stop-t1_start," segundos ")
                     
             elif int(opcion[0]) == 5: #REQUERIMIENTO 4
-                print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
+                if cont == None:
+                    print('¡KELLY CARGUE EL ARCHIVO PRIMERO!')
+                else:
+                    t1_start = process_time() #tiempo inicial
+                    genre = input('Digita un género conematográfico: ').lower().strip()
+                    data = ctrl.entenderUnGenero(cont,genre)
+                    if data == -1:
+                        print("¿¿KELLY PERO QUÉ MONDÁ DE GÉNERO ES ESE??")
+                    else:
+                        print("Lista de películas para el género ",genre," ...")
+                        for i in range(data[2]):
+                            print(i+1,'. ',lt.getElement(data[0],i)["original_title"])
+                        print('El promedio para las peliculas para el género ',genre,' es de: ',round(data[1],2))
+                        print('Para un total de ',data[2],' peliculas')
+                    t1_stop = process_time() #tiempo final
+                    print("Tiempo de ejecución ",t1_stop-t1_start," segundos ")
                 
             elif int(opcion[0]) == 6: #REQUERIMIENTO 5
-                print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
+                print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")         
             
-            elif int(opcion[0]) == 7: #REQUERIMIENTO 6
-                print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
-                        
             else:
                 sys.exit(0)
 
 main()
+# 
