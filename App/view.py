@@ -165,9 +165,10 @@ def main():
                 
             elif int(opcion[0]) == 6: #REQUERIMIENTO 5
                 print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")         
-            
-            else:
+            elif int(opcion[0]) == 7: #SALIR
                 sys.exit(0)
+            else:
+                print('Elija una opción valida...')
 
 main()
 # 
