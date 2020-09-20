@@ -123,8 +123,20 @@ def main():
                     print("Tiempo de ejecución ",t1_stop-t1_start," segundos ")
 
             elif int(opcion[0]) == 3: #REQUERIMIENTO 2
-                print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")
-
+                if cont == None:
+                    print('¡KELLY CARGUE EL ARCHIVO PRIMERO!')
+                else:
+                    t1_start=process_time()#Tiempo inicial
+                    nombre=input('Digite el nombre del director :').lower().strip()
+                    x =ctrl.getMoviesByDirector(cont,nombre)
+                    if x==-1:
+                        print('¿¿KELLY PERO QUÉ MONDÁ DE DIRECTOR ES ESE??')
+                    else:
+                        print('Nombres de peliculas para el director', nombre,' :')
+                        for i in range(x[2]):
+                            print(i+1,'. ',lt.getElement(x[0],i))
+                        print('El promedio de peliculas para el director ',nombre,'es de: ',round(x[1],2))
+                        print('Para un total de: ', x[2], 'peliculas')
             elif int(opcion[0]) == 4: #REQUERIMIENTO 3
                 if cont == None:
                     print('¡KELLY CARGUE EL ARCHIVO PRIMERO!')
