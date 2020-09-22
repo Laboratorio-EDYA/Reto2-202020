@@ -137,7 +137,7 @@ def main():
                         print('El promedio de peliculas para el director ',nombre,'es de: ',round(x[1],2))
                         print('Para un total de ', x[2], 'peliculas')
                     t1_stop = process_time() #tiempo final
-                    print("Tiempo de ejecución ",t1_stop-t1_start," segundos ")
+                    print("Tiempo de ejecución  ",t1_stop-t1_start," segundos ")
             
             elif int(opcion[0]) == 4: #REQUERIMIENTO 3
                 if cont == None:
@@ -197,5 +197,4 @@ def main():
             
             else:
                 print('Elije una opción valida.....')
-
 main()
