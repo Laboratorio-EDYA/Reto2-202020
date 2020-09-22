@@ -49,7 +49,6 @@ listCasting_l = "themoviesdb/AllMoviesCastingRaw.csv"
 # ___________________________________________________
 
 
-
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
@@ -92,12 +91,12 @@ def main():
                     size = 329047
                     loadfactor = 3
                     print("Inicializando Catálogo ....")
-                    print('CALMASIÓN, SI ES CON ARCHIVOS GRANDES SE ESTÁ DEMORANDO 87 SEG EN PROMEDIO :(')
                     # cont es el controlador que se usará de acá en adelante
                     cont = ctrl.initCatalog(size,loadfactor)
                     print("Cargando información de los archivos .....")
+                    print('CALMASIÓN, SI ES CON ARCHIVOS GRANDES SE ESTÁ DEMORANDO 76 SEG EN PROMEDIO :(')
                     ctrl.loadData(cont,listCasting_l, listDetails_l)
-                    print('Películas (detalles) cargadas: ' + str(ctrl.moviesDetailsSize(cont)))
+                    print('Películas (Detalles) cargadas: ' + str(ctrl.moviesDetailsSize(cont)))
                     print('Películas (Casting) cargadas: ' + str(ctrl.moviesCastingSize(cont)))
                 else:
                     print("Opción inválida.....")
@@ -114,10 +113,10 @@ def main():
                     if data == -1:
                         print('¿¿KELLY PERO QUÉ MONDÁ DE COMPAÑÍA ES ESA??')
                     else:
-                        print('Nombres de peliculas para la compañia ',name,':')
+                        print('Nombres de peliculas para la compañia ',name,'...')
                         for i in range(data[2]):
                             print(i+1,'. ',lt.getElement(data[0],i)['original_title'])
-                        print('El promedio para las peliculas para la compañia ',name,' es de: ',round(data[1],2))
+                        print('El promedio para las peliculas para la compañia ',name.title(),' es de: ',round(data[1],2))
                         print('Para un total de ',data[2],' peliculas')
                     t1_stop = process_time() #tiempo final
                     print("Tiempo de ejecución ",t1_stop-t1_start," segundos ")
@@ -132,11 +131,14 @@ def main():
                     if x==-1:
                         print('¿¿KELLY PERO QUÉ MONDÁ DE DIRECTOR ES ESE??')
                     else:
-                        print('Nombres de peliculas para el director', nombre,' :')
+                        print('Nombres de peliculas para el director', nombre.title(),'...')
                         for i in range(x[2]):
                             print(i+1,'. ',lt.getElement(x[0],i))
                         print('El promedio de peliculas para el director ',nombre,'es de: ',round(x[1],2))
-                        print('Para un total de: ', x[2], 'peliculas')
+                        print('Para un total de ', x[2], 'peliculas')
+                    t1_stop = process_time() #tiempo final
+                    print("Tiempo de ejecución ",t1_stop-t1_start," segundos ")
+            
             elif int(opcion[0]) == 4: #REQUERIMIENTO 3
                 if cont == None:
                     print('¡KELLY CARGUE EL ARCHIVO PRIMERO!')
@@ -147,12 +149,12 @@ def main():
                     if data == -1:
                         print('¿¿KELLY PERO QUÉ MONDÁ DE ACTOR ES ESE??')
                     else:
-                        print('Nombres de peliculas para el actor ',name,':')
+                        print('Nombres de peliculas para el actor ',name.title(),'...')
                         for i in range(data[2]):
                             print(i+1,'. ',lt.getElement(data[0],i))
                         print('El promedio para las peliculas para el actor ',name,' es de: ',round(data[1],2))
                         print('Para un total de ',data[2],' peliculas')
-                        print('Este actor tuvo más colaboraciones con el director: ',data[3])
+                        print('Este actor tuvo más colaboraciones con el director ',data[3])
                     t1_stop = process_time() #tiempo final
                     print("Tiempo de ejecución ",t1_stop-t1_start," segundos ")
                     
@@ -184,7 +186,7 @@ def main():
                     if data == -1:
                         print("¿¿KELLY PERO QUÉ MONDÁ DE PAÍS ES ESE??")
                     else:
-                        print("Lista de películas para el país ",country," ...")
+                        print("Lista de películas para el país ",country.title()," ...")
                         for i in range(lt.size(data[2])):
                             print(i+1,'. ',lt.getElement(data[0],i)["original_title"],'  - Fecha de estreno: ',lt.getElement(data[1],i),'  - Director: ',lt.getElement(data[2],i))
                     t1_stop = process_time() #tiempo final
