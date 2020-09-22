@@ -87,8 +87,8 @@ def loadmoviesDetailsCleaned(catalog,moviesfile):
             model.addMovieByProductionCompany(catalog, company.strip().lower(), movie)
         for genre in genres:
             model.addMovieByGenre(catalog, genre.strip().lower(), movie)
-        for country in countries:
-            model.addMovieByCountry(catalog, country.strip().lower(), movie)
+        for productionCountry in countries:
+            model.addMovieByProductionCountry(catalog, productionCountry.strip().lower(), movie)
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
@@ -142,3 +142,6 @@ def conocerUnActor(catalog, nameActor):
 
 def entenderUnGenero(catalog, genre):
     return model.entenderUnGenero(catalog,genre)    
+
+def encontrarPeliculasPorPais(catalog, country):
+    return model.encontrarPeliculasPorPais(catalog, country)
