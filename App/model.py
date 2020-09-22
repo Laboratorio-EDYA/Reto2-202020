@@ -398,7 +398,7 @@ def conocerUnDirector(catalog, name):
             p=it.next(movie)
             nombre= me.getValue(mp.get(catalog['moviesIdsDetails'],p['id']))['original_title']
             lt.addLast(peliculas,nombre)
-        return (peliculas, promedio)
+        return (peliculas, promedio, lt.size(movies))
     except:
         return -1
 
@@ -416,16 +416,9 @@ def conocerUnActor(catalog, nameActor):
     try:
         actor = getmoviesByActor(catalog, nameActor)
         movies = actor['movies']
+        actor['titles'] = lt.newList()
         movies_avr = actor['vote_average'][0]
         directors = {}
-        movies_names = lt.newList('ARRAY_LIST')
-        # SE HALLAN LOS NOMBRES DE LAS PELICULAS EN LA LISTA DETAILS
-        movie = it.newIterator(movies)
-        while it.hasNext(movie):
-            current = it.next(movie)
-            name = me.getValue(mp.get(catalog['moviesIdsDetails'],current['id']))['original_title']
-            lt.addLast(movies_names,name)
-        # SE ASIGNA EL NUMERO DE COLABORACIONES POR DIRECTOR CON EL ACTOR
         movie = it.newIterator(movies)
         while it.hasNext(movie):
             current = it.next(movie)
@@ -433,13 +426,14 @@ def conocerUnActor(catalog, nameActor):
                 directors[current['director_name']] = 1
             else:
                 directors[current['director_name']] += 1
+            nombre = me.getValue(mp.get(catalog['moviesIdsDetails'],current['id']))['original_title']
+            lt.addLast(actor['titles'],nombre)
         director = ['',0]
-            # SE HALLA EL DIRECTOR CON MÁS COLABORACIONES CON EL ACTOR
         for i in directors:
             if directors[i] >= director[1]:
                 director[0] = i
                 director[1] = directors[i]
-        return (movies_names,movies_avr,lt.size(movies),director[0])
+        return (actor['titles'],movies_avr,lt.size(actor['titles']),director[0])
     except:
         return -1
 

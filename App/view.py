@@ -128,7 +128,7 @@ def main():
                 else:
                     t1_start=process_time()#Tiempo inicial
                     nombre=input('Digite el nombre del director :').lower().strip()
-                    x =ctrl.getMoviesByDirector(cont,nombre)
+                    x =ctrl.conocerUnDirector(cont,nombre)
                     if x==-1:
                         print('¿¿KELLY PERO QUÉ MONDÁ DE DIRECTOR ES ESE??')
                     else:

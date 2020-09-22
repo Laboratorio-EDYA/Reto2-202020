@@ -120,19 +120,19 @@ def voteCountSize(catalog):
     return model.voteCountSize(catalog)
 
 def getMoviesByDirector(catalog,directorName):
-    return model.moviesByDirector(catalog,directorName)
+    return model.getmoviesByDirector(catalog,directorName)
 
 def getMoviesByActor(catalog):
-    return model.moviesByActor(catalog)
+    return model.getmoviesByActor(catalog)
 
 def getMoviesByProductionCompanies(catalog):
-    return model.moviesByProductionCompany(catalog)
+    return model.getmoviesByProductionCompany(catalog)
 
 def getMoviesByCountry(catalog):
-    return model.moviesByCountry(catalog)
+    return model.getmoviesByCountry(catalog)
 
 def getMoviesByGenre(catalog):
-    return model.moviesByGenre(catalog)
+    return model.getmoviesByGenre(catalog)
 
 def descubrirProductorasDeCine(catalog, nameCompany):
     return model.descubrirProductorasDeCine(catalog, nameCompany)
@@ -145,3 +145,6 @@ def entenderUnGenero(catalog, genre):
 
 def encontrarPeliculasPorPais(catalog, country):
     return model.encontrarPeliculasPorPais(catalog, country)
+
+def conocerUnDirector(catalog, name):
+    return model.conocerUnDirector(catalog,name)
