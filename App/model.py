@@ -45,7 +45,7 @@ def newCatalog(size,loadfactor):
                 'actors': None,
                 'productionCompanies': None,
                 'genres': None,
-                'countries': None}
+                'productionCountries': None}
 
     catalog['moviesDetails'] = lt.newList('SINGLE_LINKED', compareMoviesIds)
     catalog['moviesCasting'] = lt.newList('SINGLE_LINKED', compareMoviesIds)
@@ -73,10 +73,10 @@ def newCatalog(size,loadfactor):
                                  maptype='CHAINING',
                                  loadfactor=loadfactor,
                                  comparefunction=compareGenres)
-    catalog['countries'] = mp.newMap(size,
+    catalog['productionCountries'] = mp.newMap(size,
                                  maptype='CHAINING',
                                  loadfactor=loadfactor,
-                                 comparefunction=compareCountry)
+                                 comparefunction=compareProductionCountries)
     return catalog
 
 # Funciones para agregar informacion al catalogo
@@ -121,16 +121,19 @@ def addMovieByDirector(catalog,directorName,movie):
         director['vote_count'][2] += 1
         director['vote_count'][0] =  director['vote_count'][1]/ director['vote_count'][2]
     
-def addMovieByCountry(catalog,countryName,movie):
-    countries = catalog['countries']
-    existcountry = mp.contains(countries,countryName)
+def addMovieByProductionCountry(catalog,productionName,movie):
+    countries = catalog['productionCountries']
+    existcountry = mp.contains(countries,productionName)
     if existcountry:
-        entry = mp.get(countries, countryName)
+        entry = mp.get(countries, productionName)
         country = me.getValue(entry)
     else:
-        country = NewCountry(countryName)
-        mp.put(countries, countryName, country)
+        country = NewCountry(productionName)
+        mp.put(countries, productionName, country)
     lt.addLast(country['movies'], movie)
+    date = movie['release_date']
+    lt.addLast(country['dates'],date)
+
 
 def addMovieByProductionCompany(catalog,companyName,movie):
     companies = catalog['productionCompanies']
@@ -224,8 +227,8 @@ def getmoviesByGenres(catalog, genrename):
         return me.getValue(genre)
     return None
 
-def getmoviesByCountry(catalog, directorname):
-    country = mp.get(catalog['countries'], directorname.lower())
+def getmoviesByProductionCountries(catalog, countryName):
+    country = mp.get(catalog['productionCountries'], countryName.lower())
     if country:
         return me.getValue(country)
     return None
@@ -241,10 +244,11 @@ def NewDirector(directorName):
     return director
 
 def NewCountry(countryName):
-    country = {'name': "", "movies": None}
+    country = {'name': "", "movies": None,'dates': None,'directors': None}
     country['name'] = countryName.lower()
-    country['movies'] = lt.newList('ARRAY_LIST', compareCountry)
-
+    country['movies'] = lt.newList('ARRAY_LIST', compareProductionCountries)
+    country['dates'] = lt.newList('ARRAY_LIST', compareProductionCountries)
+    country['directors'] = lt.newList('ARRAY_LIST', compareProductionCountries)
     return country
 
 def NewProductionCompany(companyName):
@@ -340,7 +344,7 @@ def compareGenres(genre, entry):
     else:
         return 0 
 
-def compareCountry(country, entry):
+def compareProductionCountries(country, entry):
     countryentry = me.getKey(entry)
     if (country == countryentry):
         return 0
@@ -372,7 +376,7 @@ def productionCompaniesSize(catalog):
     return mp.size(catalog['productionCompanies'])
 
 def countriesSize(catalog):
-    return mp.size(catalog['countries'])
+    return mp.size(catalog['productionCountries'])
 
 def voteAverageSize(catalog):
     return mp.size(catalog['voteAverage'])
@@ -447,3 +451,18 @@ def entenderUnGenero(catalog,genre):
         return (peliculas,votos,lt.size(peliculas))
     except:
         return -1
+
+def encontrarPeliculasPorPais(catalog, country):
+    #try:
+    pais = getmoviesByProductionCountries(catalog,country)
+    peliculas = pais["movies"]
+    iterator = it.newIterator(peliculas)
+    while it.hasNext(iterator):
+        i = it.next(iterator)
+        director = me.getValue(mp.get(catalog['moviesIdsCasting'],i['id']))['director_name']
+        lt.addLast(pais['directors'],director)
+    dates = pais['dates']
+    directors = pais['directors']
+    return (peliculas,dates,directors)
+    #except:
+        #return -1

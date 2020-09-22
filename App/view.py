@@ -161,7 +161,7 @@ def main():
                     print('¡KELLY CARGUE EL ARCHIVO PRIMERO!')
                 else:
                     t1_start = process_time() #tiempo inicial
-                    genre = input('Digita un género conematográfico: ').lower().strip()
+                    genre = input('Digita un género cinematográfico: ').lower().strip()
                     data = ctrl.entenderUnGenero(cont,genre)
                     if data == -1:
                         print("¿¿KELLY PERO QUÉ MONDÁ DE GÉNERO ES ESE??")
@@ -175,7 +175,20 @@ def main():
                     print("Tiempo de ejecución ",t1_stop-t1_start," segundos ")
                 
             elif int(opcion[0]) == 6: #REQUERIMIENTO 5
-                print("Aún estamos desarrollando el funcionamiento de este requerimiento. Vuelve pronto :3")         
+                if cont == None:
+                    print('¡KELLY CARGUE EL ARCHIVO PRIMERO!')
+                else:
+                    t1_start = process_time() #tiempo inicial
+                    country = input('Digita un país para consultar películas: ').lower().strip()
+                    data = ctrl.encontrarPeliculasPorPais(cont,country)
+                    if data == -1:
+                        print("¿¿KELLY PERO QUÉ MONDÁ DE PAÍS ES ESE??")
+                    else:
+                        print("Lista de películas para el país ",country," ...")
+                        for i in range(lt.size(data[2])):
+                            print(i+1,'. ',lt.getElement(data[0],i)["original_title"],'  - Fecha de estreno: ',lt.getElement(data[1],i),'  - Director: ',lt.getElement(data[2],i))
+                    t1_stop = process_time() #tiempo final
+                    print("Tiempo de ejecución ",t1_stop-t1_start," segundos ")    
             
             elif int(opcion[0]) == 7: #SALIR
                 sys.exit(0)
