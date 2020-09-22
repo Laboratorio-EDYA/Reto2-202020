@@ -383,6 +383,21 @@ def voteCountSize(catalog):
 # ==============================
 # Funciones de los Requerimientos
 # ==============================
+def conocerUnDirector(catalog, name):
+    try:
+        director=getmoviesByDirector(catalog, name)
+        movies=director['movies']
+        promedio=director['vote_average'][0]
+        peliculas=lt.newList('ARRAY_LIST')
+        movie=it.newIterator(movies)
+        while it.hasNext(movie):
+            p=it.next(movie)
+            nombre= me.getValue(mp.get(catalog['moviesIdsDetails'],p['id']))['original_title']
+            lt.addLast(peliculas,nombre)
+        return (peliculas, promedio)
+    except:
+        return -1
+
 
 def descubrirProductorasDeCine(catalog, nameCompany):
     try:
